@@ -1,15 +1,16 @@
 from typing import List
 
-import points
+from points import random_points_within, points_on, plot, create_circle, create_rect
 import random
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon, Point
-def INCCH (pointsA: List[Point]) -> List[Point]:
+def INCCH (pointsA):
 
     def orientation(p1, p2, p3):  # orientation test add x1y1 -x1y1 to make it easier
         return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
     points = []
-    pointsB=sorted(pointsA, key=lambda p: (p.x, p.y))
+    #pointsB=sorted(pointsA, key=lambda p: (p.x, p.y))
+    pointsB = sorted(pointsA, key=lambda p: (p.x))
     Upans=[]
     Lowans=[]
     ans=[]
@@ -21,18 +22,29 @@ def INCCH (pointsA: List[Point]) -> List[Point]:
         while len(Upans) > 2 and orientation(Upans[-3], Upans[-2], Upans[-1]) < 0:
             Upans.pop(-2)
     pointsB.insert(0,temp)
-    Upans.append(pointsB[0])
+    pointsB.reverse() #if reverse takes time, we can iterate with index from last to first
+    Lowans.append(pointsB[0])
     pointsB.pop(0)
+
     for p in pointsB:
         Lowans.append(p)
         while len(Lowans) > 2 and orientation(Lowans[-3], Lowans[-2], Lowans[-1]) < 0:
             Lowans.pop(-2)
-    Lowans.append(Upans)
-    return Lowans
+    Upans.extend(Lowans)
+    #return Lowans,Upans
+    return Upans
 
-rect = points.create_rect([(0, 0), (0, 1), (1, 1), (1, 0)])
-points1 = points.random_points_within(rect)
-#points.plot(points1, None, rect)
+rect = create_rect([(0, 0), (0, 1), (1, 1), (1, 0)])
+points1 = random_points_within(rect,100000)
 test=INCCH(points1)
-points.plot(test, None, rect)
+plot(points1, (test))
+
+circle = create_circle(0, 0, 1)
+points2 = random_points_within(circle)
+test2=INCCH(points2)
+plot(points2, test2, circle)
+
+points3 = points_on(lambda x: x * x)
+test2=INCCH(points3)
+plot(points3,test2)
 
