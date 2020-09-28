@@ -1,13 +1,10 @@
-from typing import List
+from points import test
 
-from points import random_points_within, points_on, plot, create_circle, create_rect
-import random
-import matplotlib.pyplot as plt
-from shapely.geometry import Polygon, Point
+def orientation(p1, p2, p3):  # orientation test add x1y1 -x1y1 to make it easier
+    return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
+
 def INCCH (pointsA):
 
-    def orientation(p1, p2, p3):  # orientation test add x1y1 -x1y1 to make it easier
-        return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
     points = []
     #pointsB=sorted(pointsA, key=lambda p: (p.x, p.y))
     pointsB = sorted(pointsA, key=lambda p: (p.x))
@@ -34,17 +31,6 @@ def INCCH (pointsA):
     #return Lowans,Upans
     return Upans
 
-rect = create_rect([(0, 0), (0, 1), (1, 1), (1, 0)])
-points1 = random_points_within(rect,100000)
-test=INCCH(points1)
-plot(points1, (test))
-
-circle = create_circle(0, 0, 1)
-points2 = random_points_within(circle)
-test2=INCCH(points2)
-plot(points2, test2, circle)
-
-points3 = points_on(lambda x: x * x)
-test2=INCCH(points3)
-plot(points3,test2)
+if __name__ == "__main__":
+    test(INCCH)
 

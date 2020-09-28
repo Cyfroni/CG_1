@@ -1,9 +1,4 @@
-from typing import List
-import numpy as np
-from points import random_points_within, points_on, plot, create_circle, create_rect
-import random
-import matplotlib.pyplot as plt
-from shapely.geometry import Polygon, Point
+from shapely.geometry import Point
 
 
 def slope(p1, p2):
@@ -22,8 +17,8 @@ def separateSets(points,median):
             pr.append(x)
 
 def getmax_min(points): # find max and min in n operations
-    xmax=Point(-np.inf, -np.inf)
-    xmin = Point(np.inf, -np.inf)
+    xmax = Point(-float('Inf'), -float('Inf'))
+    xmin = Point(float('Inf'), -float('Inf'))
     for x in points:
         if (x.x<xmin.x):
             xmin=x

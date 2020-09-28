@@ -1,6 +1,4 @@
-import numpy as np
 import random
-
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon, Point
 
@@ -10,11 +8,10 @@ def domain(x_limits, num_points):
     for x in range(num_points):
         yield x_min + x * interval
 
-def random_points_within(fig, num_points=1000):
+def random_points_within(fig, num_points):
     min_x, min_y, max_x, max_y = fig.bounds
-
     points = []
-
+    
     while len(points) < num_points:
         random_point = Point([random.uniform(min_x, max_x), random.uniform(min_y, max_y)])
         if (random_point.within(fig)):
@@ -22,7 +19,7 @@ def random_points_within(fig, num_points=1000):
 
     return points
 
-def points_on(fun, x_limits=(-1, 1), num_points=1000):
+def points_on(fun, x_limits, num_points):
     return [Point([x, fun(x)]) for x in domain(x_limits, num_points)]
 
 def unzip_p(points):
@@ -52,17 +49,29 @@ def plot(points, hull=None, fig=None):
 def create_circle(x, y, r):
     return Point(x, y).buffer(r)
 
-def create_rect(bounds):
-    return Polygon(bounds)
+def create_poly(points):
+    return Polygon(points)
+
+def test(alg, 
+        poly=[(0, 0), (0, 1), (1, 1), (1, 0)], poly_num_points=1000,
+        circle=[0, 0, 1], circle_num_points=1000,
+        curve=lambda x: x*x, curve_limits=(-1, 1), curve_num_points=1000, 
+        plot_fig=False):
+
+    fig = create_poly(poly)
+    points = random_points_within(fig, poly_num_points)
+    hull = alg(points)
+    plot(points, hull, fig if plot_fig else None)
+
+    fig = create_circle(*circle)
+    points = random_points_within(fig, circle_num_points)
+    hull = alg(points)
+    plot(points, hull, fig if plot_fig else None)
+
+    points = points_on(curve, curve_limits, curve_num_points)
+    hull = alg(points)
+    plot(points, hull)
+
 
 if __name__ == "__main__":
-    rect = create_rect([(0, 0), (0, 1), (1, 1), (1, 0)])
-    points1 = random_points_within(rect)
-    plot(points1, None, rect)
-
-    circle = create_circle(0, 0, 1)
-    points2 = random_points_within(circle)
-    plot(points2, None, circle)
-
-    points3 = points_on(lambda x: x*x)
-    plot(points3)
+    test(lambda x: [], plot_fig=True)
