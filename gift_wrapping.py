@@ -23,7 +23,7 @@ def compute_upper_tangent(p, r, P):
             new_p = v
     return new_p, new_r
 
-def gift(P):
+def GIFT_CH(P):
     hull = []
     _, q1 = getmax_min(P)
     p = q1
@@ -34,10 +34,9 @@ def gift(P):
     while cond:
         p, r = compute_upper_tangent(p, r, P)
         hull.append(p)
-        # print(min_angle, r, p)
         cond = p != q1
 
     return hull
 
 if __name__ == "__main__":
-    test(gift, curve_num_points=100)
+    test(GIFT_CH, curve_num_points=100)

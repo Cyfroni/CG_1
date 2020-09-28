@@ -3,7 +3,7 @@ from points import test
 def orientation(p1, p2, p3):  # orientation test add x1y1 -x1y1 to make it easier
     return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
 
-def INCCH (pointsA):
+def INC_CH (pointsA):
 
     points = []
     #pointsB=sorted(pointsA, key=lambda p: (p.x, p.y))
@@ -32,5 +32,5 @@ def INCCH (pointsA):
     return Upans
 
 if __name__ == "__main__":
-    test(INCCH)
+    test(INC_CH)
 
