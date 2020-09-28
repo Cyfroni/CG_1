@@ -11,7 +11,7 @@ def domain(x_limits, num_points):
 def random_points_within(fig, num_points):
     min_x, min_y, max_x, max_y = fig.bounds
     points = []
-    
+
     while len(points) < num_points:
         random_point = Point([random.uniform(min_x, max_x), random.uniform(min_y, max_y)])
         if (random_point.within(fig)):
@@ -46,32 +46,37 @@ def plot(points, hull=None, fig=None):
 
     plt.show()
 
-def create_circle(x, y, r):
-    return Point(x, y).buffer(r)
+def create_fig(cred):
+    if all(isinstance(x, int) for x in cred):
+        return Point(cred[0], cred[1]).buffer(cred[2])
+    else:
+        return Polygon(cred)
 
-def create_poly(points):
-    return Polygon(points)
+def test_fig(alg, fig_cred, num_points):
+    fig = create_fig(fig_cred)
+    points = random_points_within(fig, num_points)
+    hull = alg(points)
+    return points, hull, fig
+
+def test_curve(alg, curve, curve_limits, curve_num_points):
+    points = points_on(curve, curve_limits, curve_num_points)
+    hull = alg(points)
+    return points, hull
 
 def test(alg, 
         poly=[(0, 0), (0, 1), (1, 1), (1, 0)], poly_num_points=1000,
         circle=[0, 0, 1], circle_num_points=1000,
-        curve=lambda x: x*x, curve_limits=(-1, 1), curve_num_points=1000, 
-        plot_fig=False):
+        curve=lambda x: x*x, curve_limits=(-1, 1), curve_num_points=1000):
 
-    fig = create_poly(poly)
-    points = random_points_within(fig, poly_num_points)
-    hull = alg(points)
-    plot(points, hull, fig if plot_fig else None)
+    points, hull, fig = test_fig(alg, poly, poly_num_points)
+    plot(points, hull)
 
-    fig = create_circle(*circle)
-    points = random_points_within(fig, circle_num_points)
-    hull = alg(points)
-    plot(points, hull, fig if plot_fig else None)
+    points, hull, fig = test_fig(alg, circle, circle_num_points)
+    plot(points, hull)
 
-    points = points_on(curve, curve_limits, curve_num_points)
-    hull = alg(points)
+    points, hull = test_curve(alg, curve, curve_limits, curve_num_points)
     plot(points, hull)
 
 
 if __name__ == "__main__":
-    test(lambda x: [], plot_fig=True)
+    test(lambda x: [])
