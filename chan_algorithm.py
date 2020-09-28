@@ -38,7 +38,6 @@ def CH_CH(_P):
 
 if __name__ == "__main__":
     test(CH_CH)
-    
 
     # fig = points.create_fig([0, 0, 1])
     # p = points.random_points_within(fig, 2**2**3 - 100) # / 2**2**2 = 9.75 => 10 rounds
