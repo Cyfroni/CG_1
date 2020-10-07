@@ -1,20 +1,22 @@
-from points import test
-from Marriage_before_Conquest import getmax_min
+from data_manager import test
+from common import getmax_min, compute_upper_tangent
 from graham_scan import INC_CH
-from gift_wrapping import compute_upper_tangent
 from math import log, floor
+
 
 def split(l, n):
     return [l[i:i + n] for i in range(0, len(l), n)]
 
+
 def remove_leftmost(p, U):
-    new_U =  [ [v for v in U_i if v.x > p.x] for U_i in U ]
-    return [ U_i for U_i in new_U if len(U_i) > 0 ]
+    new_U = [[v for v in U_i if v.x > p.x] for U_i in U]
+    return [U_i for U_i in new_U if len(U_i) > 0]
+
 
 def upper_hull(_P):
     n = len(_P)
     p_max, p_min = getmax_min(_P)
-    for i in range( floor(log(log(n, 2), 2)) ):
+    for i in range(floor(log(log(n, 2), 2))):
         h = 2**2**(i+1)
         P = split(_P, h)
         U = [INC_CH(P_i) for P_i in P]
@@ -33,8 +35,10 @@ def upper_hull(_P):
         if p == p_max:
             return _U
 
+
 def CH_CH(_P):
-    return upper_hull(_P) # + upper_hull(_P[::-1])
+    return upper_hull(_P)  # + upper_hull(_P[::-1])
+
 
 if __name__ == "__main__":
     test(CH_CH)
