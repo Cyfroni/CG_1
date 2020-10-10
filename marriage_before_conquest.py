@@ -1,5 +1,5 @@
 from random import random, randint
-from data_manager import test
+from data_manager import test, calc_bottom_hull
 from common import getmax_min
 
 
@@ -146,8 +146,8 @@ def KSHull(S):
 
 
 def MbC_CH(P):
-    return list(KSHull(P))
+    return list(KSHull(P)) + calc_bottom_hull(KSHull, P)
 
 
 if __name__ == "__main__":
-    test(MbC_CH)
+    test(MbC_CH, curve_num_points=100)

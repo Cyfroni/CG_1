@@ -32,4 +32,4 @@ def INC_CH(pointsA):
 
 
 if __name__ == "__main__":
-    test(INC_CH)
+    test(INC_CH, curve_num_points=100)
