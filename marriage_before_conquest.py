@@ -1,79 +1,68 @@
 from random import random, randint
-from points import test
-from shapely.geometry import Point
+from data_manager import test, calc_bottom_hull
+from common import getmax_min
 
 
 def slope(p1, p2):
     return 1.0 * (p1.y - p2.y) / (p1.x - p2.x) if p1.x != p2.x else float('inf')
 
+
 def split_by(p, val):
     pl = []
     pr = []
 
-    if len(p)==2:
-        x=p[0]
-        y=p[1]
-        if (x.x<y.x):
-            return x,y
+    if len(p) == 2:
+        x = p[0]
+        y = p[1]
+        if (x.x < y.x):
+            return x, y
         else:
-            return y,x
+            return y, x
 
-    return separateSets1(p,val)
+    return separateSets1(p, val)
 
-def separateSets1(points,median):
-    pl=[]
-    pr=[]
+
+def separateSets1(points, median):
+    pl = []
+    pr = []
     for x in points:
-        if x.x<median.x:
+        if x.x < median.x:
             pl.append(x)
         else:
             pr.append(x)
-    return pl,pr
+    return pl, pr
 
-def separateSets(points,left,right):
-    pl=[]
-    pr=[]
+
+def separateSets(points, left, right):
+    pl = []
+    pr = []
     for x in points:
-        if x.x<=left.x:
+        if x.x <= left.x:
             pl.append(x)
-        elif x.x>=right.x:
+        elif x.x >= right.x:
             pr.append(x)
-    return pl,pr
+    return pl, pr
 
-def separate3Sets(pl, pr, slope,median):
-    small=[]
-    equal=[]
-    big=[]
-    smallr=[]
-    equalr=[]
-    bigr=[]
+
+def separate3Sets(pl, pr, slope, median):
+    small = []
+    equal = []
+    big = []
+    smallr = []
+    equalr = []
+    bigr = []
     for i in range(len(pr)):
-        if (slope[i]==median):
+        if (slope[i] == median):
             equalr.append(pr[i])
             equal.append(pl[i])
-        elif (slope[i]>median):
+        elif (slope[i] > median):
             bigr.append(pr[i])
             big.append(pl[i])
         else:
             smallr.append(pr[i])
             small.append(pl[i])
-    return small,equal,big,smallr,equalr,bigr
+    return small, equal, big, smallr, equalr, bigr
 
-def getmax_min(points): # find max and min in n operations
-    xmax = Point(-float('Inf'), -float('Inf'))
-    xmin = Point(float('Inf'), -float('Inf'))
-    for x in points:
-        if (x.x<xmin.x):
-            xmin=x
-        elif(x.x==xmin.x):
-            if (x.y>xmin.y):
-                xmin=x
-        if(x.x>xmax.x):
-            xmax = x
-        elif (x.x == xmax.x):
-            if (x.y > xmax.y):
-                xmax = x
-    return xmax,xmin
 
 def quickselect(ls, index, lo=0, hi=None, depth=0, fun=lambda e: e):
     if hi is None:
@@ -96,32 +85,34 @@ def quickselect(ls, index, lo=0, hi=None, depth=0, fun=lambda e: e):
     else:
         return ls[cur]
 
+
 def bridge(S, Vl):
-    canditates=[]
+    canditates = []
 
     if len(S) == 2:
         return getmax_min(S)[::-1]
 
-    V = quickselect(S,int( len(S) / 2), fun=lambda e: e.x)
+    V = quickselect(S, int(len(S) / 2), fun=lambda e: e.x)
 
     pl, pr = split_by(S, V)
 
-    if (len(pr)>len(pl)):
+    if (len(pr) > len(pl)):
         canditates.append(pr.pop(0))
-    elif(len(pr)<len(pl)):
+    elif(len(pr) < len(pl)):
         canditates.append(pl.pop(0))
 
     slopearr = [slope(l, r) for l, r in zip(pl, pr)]
 
-    k = quickselect(slopearr,int(len(slopearr)/2))
-    
+    k = quickselect(slopearr, int(len(slopearr)/2))
+
     max_slope = max(point.y - k * point.x for point in S)
     max_set = [point for point in S if point.y - k * point.x == max_slope]
 
     msmax, msmin = getmax_min(max_set)
     if msmin.x <= Vl.x < msmax.x:
-        return msmin, msmax 
-    smalls,equall,bigl,smallr,equalr,bigr=separate3Sets(pl,pr,slopearr,k)
+        return msmin, msmax
+    smalls, equall, bigl, smallr, equalr, bigr = separate3Sets(
+        pl, pr, slopearr, k)
 
     if Vl.x >= msmax.x:
         canditates.extend(equalr)
@@ -134,14 +125,15 @@ def bridge(S, Vl):
         canditates.extend(bigl)
         canditates.extend(bigr)
 
-    return bridge(canditates,Vl)
+    return bridge(canditates, Vl)
 
-def KSHull(points):    
-    Vl=quickselect(points,int( len(points) / 2), fun=lambda e: e.x)
-    Upl, Upr = bridge(points,Vl)
-    Ls,Rs=separateSets(points,Upl,Upr)
 
-    maxs, mins = getmax_min(points)
+def KSHull(S):
+    Vl = quickselect(S, int(len(S) / 2), fun=lambda e: e.x)
+    Upl, Upr = bridge(S, Vl)
+    Ls, Rs = separateSets(S, Upl, Upr)
+
+    maxs, mins = getmax_min(S)
     if mins == Upl:
         yield Upl
     else:
@@ -152,8 +144,10 @@ def KSHull(points):
     else:
         yield from KSHull(Rs)
 
-def MbC_CH(points):
-    return list(KSHull(points))
+
+def MbC_CH(P):
+    return list(KSHull(P)) + calc_bottom_hull(KSHull, P)
+
 
 if __name__ == "__main__":
-    test(MbC_CH)
+    test(MbC_CH, curve_num_points=100)
