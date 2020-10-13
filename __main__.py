@@ -9,9 +9,13 @@ from pandas import DataFrame
 algs = [INC_CH, GIFT_CH, CH_CH, MbC_CH]
 
 
-def run(creds, num_points, name="Res"):
+def run(creds, num_points, name="Res", view=False):
     excel = dict()
     excel['name'] = ['creds', 'num', 'hulls'] + [alg.__name__ for alg in algs]
+
+    if view:
+        for cred in creds:
+            data_manager.plot(test_manager.gen_points(cred, 1000)[0])
 
     for cred in creds:
         for num in num_points:
@@ -29,9 +33,10 @@ def run(creds, num_points, name="Res"):
 if __name__ == "__main__":
     creds = [
         [(0, 0), (0, 1), (1, 1), (1, 0)],
+        [(0, 0), (0, 5), (5, 5), (5, 0)],
         [0, 0, 1],
-        (lambda x: x*x, (-1, 1))
+        # (lambda x: x*x, (-1, 1))
     ]
-    num_points = [10, 100, 1000]
+    num_points = [100, 1000, 2000]
 
-    run(creds, num_points, "1")
+    run(creds, num_points, "1", True)
