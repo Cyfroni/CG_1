@@ -1,4 +1,4 @@
-from test_manager import test
+from data_manager import test
 from common import getmax_min, compute_upper_tangent
 
 

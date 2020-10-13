@@ -1,5 +1,4 @@
-from test_manager import test
-from data_manager import calc_bottom_hull
+from data_manager import test, calc_bottom_hull
 from common import getmax_min, compute_upper_tangent
 from graham_scan import INC_CH
 from math import log, floor
