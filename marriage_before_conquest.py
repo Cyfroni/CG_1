@@ -1,6 +1,7 @@
-from random import random, randint
-from data_manager import test, calc_bottom_hull
+from test_manager import test
+from data_manager import calc_bottom_hull
 from common import getmax_min
+from random import random, randint
 
 
 def slope(p1, p2):

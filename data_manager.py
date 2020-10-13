@@ -1,7 +1,6 @@
 import random
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon, Point
-import time
 
 
 def domain(x_limits, num_points):
@@ -24,7 +23,8 @@ def random_points_within(fig, num_points):
     return points
 
 
-def points_on(fun, x_limits, num_points):
+def points_on(cred, num_points):
+    fun, x_limits = cred
     return [Point([x, fun(x)]) for x in domain(x_limits, num_points)]
 
 
@@ -61,57 +61,10 @@ def plot(points, hull=[], fig=None):
 def create_fig(cred):
     if all(isinstance(x, int) for x in cred):
         return Point(cred[0], cred[1]).buffer(cred[2])
-    else:
+    elif all(isinstance(x, tuple) for x in cred):
         return Polygon(cred)
-
-
-def test_fig(alg, fig_cred, num_points):
-    fig = create_fig(fig_cred)
-    points = random_points_within(fig, num_points)
-
-    start = time.time()
-    hull = alg(points)
-    time_elapsed = time.time() - start
-
-    return points, hull, fig, time_elapsed
-
-
-def test_curve(alg, curve, curve_limits, curve_num_points):
-    points = points_on(curve, curve_limits, curve_num_points)
-
-    start = time.time()
-    hull = alg(points)
-    time_elapsed = time.time() - start
-
-    return points, hull, time_elapsed
-
-
-def test(alg,
-         poly=[(0, 0), (0, 1), (1, 1), (1, 0)], poly_num_points=1000,
-         circle=[0, 0, 1], circle_num_points=1000,
-         curve=lambda x: x*x, curve_limits=(-1, 1), curve_num_points=1000):
-
-    points, hull, fig, time_elapsed = test_fig(alg, poly, poly_num_points)
-    print(f"\n\nPLOT\nPoints: {len(points)}\nHull: {len(hull)}")
-    print(f"Time elapsed: {time_elapsed : .2f}s")
-    plot(points, hull)
-
-    points, hull, fig, time_elapsed = test_fig(alg, circle, circle_num_points)
-    print(f"\n\nPLOT\nPoints: {len(points)}\nHull: {len(hull)}")
-    print(f"Time elapsed: {time_elapsed : .2f}s")
-    plot(points, hull)
-
-    points, hull, time_elapsed = test_curve(
-        alg, curve, curve_limits, curve_num_points)
-    print(f"\n\nPLOT\nPoints: {len(points)}\nHull: {len(hull)}")
-    print(f"Time elapsed: {time_elapsed : .2f}s")
-    plot(points, hull)
 
 
 def calc_bottom_hull(upper_hull, points):
     inv_p = [Point(-p.x, -p.y) for p in points]
     return [Point(-p.x, -p.y) for p in upper_hull(inv_p)]
-
-
-if __name__ == "__main__":
-    test(lambda x: [])

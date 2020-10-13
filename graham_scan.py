@@ -1,4 +1,4 @@
-from data_manager import test
+from test_manager import test
 
 
 def orientation(p1, p2, p3):  # orientation test add x1y1 -x1y1 to make it easier
