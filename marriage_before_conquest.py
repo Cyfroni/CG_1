@@ -133,7 +133,7 @@ def KSHull(S):
     Vl = quickselect(S, int(len(S) / 2), fun=lambda e: e.x)
     Upl, Upr = bridge(S, Vl)
     Ls, Rs = separateSets(S, Upl, Upr)
-
+    print("a")
     maxs, mins = getmax_min(S)
     if mins == Upl:
         yield Upl
@@ -147,7 +147,7 @@ def KSHull(S):
 
 
 def MbC_CH(P):
-    return list(KSHull(P)) + calc_bottom_hull(KSHull, P)
+    return list(KSHull(P))  # + calc_bottom_hull(KSHull, P)
 
 
 if __name__ == "__main__":

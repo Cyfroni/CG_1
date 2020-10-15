@@ -31,7 +31,7 @@ def _test(alg, cred, num_points):
 def test(alg,
          poly=[(0, 0), (0, 1), (1, 1), (1, 0)], poly_num_points=1000,
          circle=[0, 0, 1], circle_num_points=1000,
-         curve=(lambda x: x*x, (-1, 1)), curve_num_points=1000):
+         curve=(lambda x: -x*x, (-1, 1)), curve_num_points=1000):
 
     for cred, num_points in [(poly, poly_num_points), (circle, circle_num_points), (curve, curve_num_points)]:
         points, hull, fig, time_elapsed = _test(alg, cred, num_points)

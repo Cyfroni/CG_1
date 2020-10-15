@@ -7,7 +7,6 @@ def GIFT_CH(P):
     _, q1 = getmax_min(P)
     p = q1
     r = 180.0
-    hull.append(q1)
 
     cond = True
     while cond:
