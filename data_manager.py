@@ -49,6 +49,8 @@ def plot_hull(hull):
 
 
 def plot(points, hull=[], fig=None):
+    # plt.ylim(-0.2, 1.2)
+    # plt.xlim(-0.2, 1.2)
     plot_p(points)
     if hull:
         plot_hull(hull)

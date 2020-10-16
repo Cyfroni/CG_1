@@ -2,32 +2,26 @@ from test_manager import test
 from common import orientation
 
 
-def INC_CH(pointsA):
-    points = []
-    pointsB = sorted(pointsA, key=lambda p: (p.x))
-    Upans = []
-    Lowans = []
+def upper_hull(sorted_P):
     ans = []
-    Upans.append(pointsB[0])
-    temp = pointsB[0]
-    pointsB.pop(0)
-    for p in pointsB:
-        Upans.append(p)
-        while len(Upans) > 2 and orientation(Upans[-3], Upans[-2], Upans[-1]) < 0:
-            Upans.pop(-2)
-    Upans.pop()
-    pointsB.insert(0, temp)
-    pointsB.reverse()  # if reverse takes time, we can iterate with index from last to first
-    Lowans.append(pointsB[0])
-    pointsB.pop(0)
+    for p in sorted_P:
+        ans.append(p)
+        if p == sorted_P[0]:
+            continue
+        while len(ans) > 2 and orientation(ans[-3], ans[-2], ans[-1]) < 0:
+            ans.pop(-2)
+    return ans
 
-    for p in pointsB:
-        Lowans.append(p)
-        while len(Lowans) > 2 and orientation(Lowans[-3], Lowans[-2], Lowans[-1]) < 0:
-            Lowans.pop(-2)
-    Lowans.pop()
-    # Upans.extend(Lowans)
-    return Upans + Lowans
+
+def INC_CH(points, full=True):
+    P = sorted(points, key=lambda p: -(p.x))
+    hull = upper_hull(P)
+
+    if full:
+        hull.pop()
+        P.reverse()
+        hull = hull + upper_hull(P)
+    return hull
 
 
 if __name__ == "__main__":
