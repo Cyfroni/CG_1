@@ -28,6 +28,11 @@ def tangent(p, U, l):
 def upper_hull(_P):
     n = len(_P)
     p_max, p_min = getmax_min(_P)
+    # def split(*args): return []
+    # def INC_CH(*args): return []
+    # def tangent(*args): return []
+    # def compute_upper_tangent(*args): return [1, 2]
+    # def remove_leftmost(*args): return []
     for i in range(1, floor(log(log(n, 2), 2)) + 2):
         h = 2**2**i
 
@@ -42,7 +47,7 @@ def upper_hull(_P):
         _U = []
         p = p_min
         l = 180.0
-        start = time.time()
+        # start = time.time()
         for ii in range(h):
             _U.append(p)
             if p == p_max:

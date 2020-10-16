@@ -61,24 +61,6 @@ def compute_upper_tangent_sorted(p, P):
     return P[l]
 
 
-# def compute_upper_tangent_sorted2(p, P):
-#     next = make_pair(lpoint.first, (lpoint.second + 1) %
-#                      hulls[lpoint.first].size())
-#     for (int h=0
-#          h < hulls.size()
-#          h++){
-#         if(h != lpoint.first){
-#             int s = tangent(hulls[h], p)
-#             point q = hulls[next.first][next.second]
-#             point r = hulls[h][s]
-#             int t = orientation(p, q, r)
-#             if(t == RIGHT_TURN | | (t == COLLINEAR) & & dist(p, r) > dist(p, q))
-#             next = make_pair(h, s)
-#         }
-#     }
-#     return next
-
-
 def getmax_min(points):  # find max and min in n operations
     xmax = Point(-float('Inf'), -float('Inf'))
     xmin = Point(float('Inf'), -float('Inf'))
@@ -90,6 +72,33 @@ def getmax_min(points):  # find max and min in n operations
                 xmin = x
         if(x.x > xmax.x):
             xmax = x
+        elif (x.x == xmax.x):
+            if (x.y > xmax.y):
+                xmax = x
+    return xmax, xmin
+
+
+def getmax_min1(points):  # find max and min in n operations
+    if (points[0].x > points[1].x):
+        xmax = points[0]
+        xmin = points[1]
+    elif((points[0].x < points[1].x)):
+        xmin = points[0]
+        xmax = points[1]
+    elif(points[0].y > points[1].y):
+        xmin = points[0]
+        xmax = points[0]
+    else:
+        xmax = points[1]
+        xmin = points[1]
+    for x in points[2:-1]:
+        if (x.x < xmin.x):
+            xmin = x
+        elif(x.x > xmax.x):
+            xmax = x
+        elif(x.x == xmin.x):
+            if (x.y > xmin.y):
+                xmin = x
         elif (x.x == xmax.x):
             if (x.y > xmax.y):
                 xmax = x
