@@ -28,47 +28,25 @@ def tangent(p, U, l):
 def upper_hull(_P):
     n = len(_P)
     p_max, p_min = getmax_min(_P)
-    # def split(*args): return []
-    # def INC_CH(*args): return []
-    # def tangent(*args): return []
-    # def compute_upper_tangent(*args): return [1, 2]
-    # def remove_leftmost(*args): return []
     for i in range(1, floor(log(log(n, 2), 2)) + 2):
         h = 2**2**i
 
-        # start = time.time()
         P = split(_P, h)
-        # print(f"[{i}]split: {time.time() - start}")
-
-        # start = time.time()
         U = [INC_CH(P_i, False) for P_i in P]
-        # print(f"[{i}]grahams: {time.time() - start}")
 
         _U = []
         p = p_min
         l = 180.0
-        # start = time.time()
-        for ii in range(h):
-            _U.append(p)
+        for _ in range(h):
             if p == p_max:
                 break
-
-            # start = time.time()
+            _U.append(p)
             t = tangent(p, U, l)
-            # print(f"[{i}][{ii}]tangent: {time.time() - start}")
-
-            # data_manager.plot(list(itertools.chain.from_iterable(U)))
-
-            # start = time.time()
             p, l = compute_upper_tangent(p, l, t)
-            # print(f"[{i}][{ii}]tangent2: {time.time() - start}")
-
-            # start = time.time()
             U = remove_leftmost(p, U)
-            # print(f"[{i}][{ii}]remove: {time.time() - start}")
 
-        # print(f"[{i}]end: {time.time() - start}")
         if p == p_max:
+            _U.append(p)
             return _U
 
 

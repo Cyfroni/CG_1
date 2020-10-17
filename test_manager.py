@@ -8,9 +8,18 @@ except ImportError:
 
 
 def test_alg(alg, points, *args):
-    start = time.time()
-    hull = alg(points)
-    time_elapsed = time.time() - start
+    hull = []
+    time_elapsed = "error"
+
+    try:
+        start = time.time()
+        hull = alg(points)
+        time_elapsed = time.time() - start
+    except KeyboardInterrupt:
+        raise
+    except Exception as e:
+        print(e)
+
     return hull, time_elapsed
 
 
@@ -22,7 +31,7 @@ def test_alg_timeout(alg, points, timeout):
     timer.start()
     try:
         hull, time_elapsed = test_alg(alg, points)
-    except:
+    except KeyboardInterrupt:
         pass
     finally:
         timer.cancel()
