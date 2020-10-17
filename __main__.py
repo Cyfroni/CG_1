@@ -68,4 +68,4 @@ if __name__ == "__main__":
         MbC_CH
     ]
 
-    run(creds, num_points, algs, filename="Res1", iterations=10, timeout=200)
+    run(creds, num_points, algs, filename="Res1", iterations=10)
