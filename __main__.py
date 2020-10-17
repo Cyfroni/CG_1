@@ -33,7 +33,7 @@ def run(creds, num_points, algs, filename="Res", iterations=1, view=False, timeo
                 hulls = [len(hull) for hull, time in res]
                 times = [time for hull, time in res]
                 print(
-                    f"{f'{i}#': <3} {f'{cred} /// {num} /// {hulls}': <75}",
+                    f"{f'{i}#': <3} {str(cred)[:50]: <50} {str(num): <7} {str(hulls)[:40]: <40}",
                     ' '.join([format_output(t) for t in times])
                 )
                 excel[f"{cred} /// {num}"] = [cred, num, hulls] + times
