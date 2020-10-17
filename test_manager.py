@@ -1,11 +1,32 @@
 import data_manager as dm
 import time
+import threading
+try:
+    import thread
+except ImportError:
+    import _thread as thread
 
 
-def test_alg(alg, points):
+def test_alg(alg, points, *args):
     start = time.time()
     hull = alg(points)
     time_elapsed = time.time() - start
+    return hull, time_elapsed
+
+
+def test_alg_timeout(alg, points, timeout):
+    hull = []
+    time_elapsed = f"{timeout}+"
+
+    timer = threading.Timer(timeout, thread.interrupt_main)
+    timer.start()
+    try:
+        hull, time_elapsed = test_alg(alg, points)
+    except:
+        pass
+    finally:
+        timer.cancel()
+
     return hull, time_elapsed
 
 

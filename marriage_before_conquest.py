@@ -2,6 +2,7 @@ from test_manager import test
 from data_manager import calc_bottom_hull
 from common import getmax_min
 from random import random, randint
+import data_manager
 
 
 def slope(p1, p2):
@@ -107,7 +108,8 @@ def bridge(S, Vl):
     k = quickselect(slopearr, int(len(slopearr)/2))
 
     max_slope = max(point.y - k * point.x for point in S)
-    max_set = [point for point in S if point.y - k * point.x == max_slope]
+    max_set = [point for point in S if max_slope - 0.000000001 <
+               point.y - k * point.x < max_slope + 0.000000001]
 
     msmax, msmin = getmax_min(max_set)
     if msmin.x <= Vl.x < msmax.x:
@@ -120,11 +122,13 @@ def bridge(S, Vl):
         canditates.extend(bigr)
         canditates.extend(smallr)
         canditates.extend(smalls)
-    if Vl.x < msmin.x:
-        canditates.extend(equall)
+    elif Vl.x < msmin.x:
         canditates.extend(smalls)
+        canditates.extend(equall)
         canditates.extend(bigl)
         canditates.extend(bigr)
+    else:
+        print('else: ', Vl)
 
     return bridge(canditates, Vl)
 
@@ -133,7 +137,6 @@ def KSHull(S):
     Vl = quickselect(S, int(len(S) / 2), fun=lambda e: e.x)
     Upl, Upr = bridge(S, Vl)
     Ls, Rs = separateSets(S, Upl, Upr)
-    print("a")
     maxs, mins = getmax_min(S)
     if mins == Upl:
         yield Upl
@@ -147,7 +150,9 @@ def KSHull(S):
 
 
 def MbC_CH(P):
-    return list(KSHull(P))  # + calc_bottom_hull(KSHull, P)
+    hull = list(KSHull(P))
+    hull.pop()
+    return hull + calc_bottom_hull(KSHull, P)
 
 
 if __name__ == "__main__":
