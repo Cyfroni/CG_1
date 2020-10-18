@@ -1,6 +1,9 @@
 import data_manager as dm
-import time
+import pandas as pd
+import common
 import threading
+import time
+import uuid
 try:
     import thread
 except ImportError:
@@ -72,3 +75,39 @@ def test(alg,
         if plot:
             dm.plot(points, hull)
     return times
+
+
+def format_output(t):
+    if isinstance(t, float):
+        t = f"{t: .4f}"
+    return f"{t: >8}"
+
+
+def run(creds, num_points, algs, filename="Res", iterations=1, view=False, timeout=None):
+    test_fun = test_alg_timeout if timeout else test_alg
+    writer = pd.ExcelWriter(f"{filename}.xlsx", engine='openpyxl')
+
+    if view:
+        for cred in creds:
+            dm.plot(gen_points(cred, 1000)[0])
+    for i in range(1, iterations+1):
+        excel = dict()
+        excel['name'] = ['creds', 'num', 'hulls'] + \
+            [alg.__name__ for alg in algs]
+        for cred in creds:
+            for num in num_points:
+                points, _ = gen_points(cred, num)
+                res = [test_fun(alg, points, timeout) for alg in algs]
+                hulls = [len(hull) for hull, time in res]
+                times = [time for hull, time in res]
+                print(
+                    f"{f'{i}#': <3} {str(cred)[:50]: <50} {str(num): <7} {str(hulls)[:40]: <40}",
+                    ' '.join([format_output(t) for t in times])
+                )
+                excel[f"{cred} /// {num} /// {uuid.uuid4().hex}"] = [cred,
+                                                                     num, hulls] + times
+
+        pd.DataFrame(excel).transpose().to_excel(
+            writer, sheet_name=f"Iter {i}")
+    writer.save()
+    writer.close()
