@@ -77,10 +77,13 @@ def test(alg,
     return times
 
 
-def format_output(t):
-    if isinstance(t, float):
-        t = f"{t: .4f}"
-    return f"{t: >8}"
+def format_output(cred, num, hull, it, times):
+    def format_float(t):
+        if isinstance(t, float):
+            t = f"{t: .4f}"
+        return f"{t: >8}"
+
+    return f"{str(cred)[:70]: <75} {str(num): <8} {str(hull): <8} {f'{it}#': >3} " + ' '.join([format_float(t) for t in times])
 
 
 def run(creds, num_points, algs, filename="Res", iterations=1, view=False, timeout=None):
@@ -90,24 +93,32 @@ def run(creds, num_points, algs, filename="Res", iterations=1, view=False, timeo
     if view:
         for cred in creds:
             dm.plot(gen_points(cred, 1000)[0])
-    for i in range(1, iterations+1):
+
+    for i, cred in enumerate(creds):
         excel = dict()
-        excel['name'] = ['creds', 'num', 'hulls'] + \
+        excel['id'] = ['creds', 'n', 'h', 'it'] + \
             [alg.__name__ for alg in algs]
-        for cred in creds:
-            for num in num_points:
+        for num in num_points:
+            for it in range(1, iterations+1):
                 points, _ = gen_points(cred, num)
                 res = [test_fun(alg, points, timeout) for alg in algs]
-                hulls = [len(hull) for hull, time in res]
-                times = [time for hull, time in res]
-                print(
-                    f"{f'{i}#': <3} {str(cred)[:50]: <50} {str(num): <7} {str(hulls)[:40]: <40}",
-                    ' '.join([format_output(t) for t in times])
-                )
-                excel[f"{cred} /// {num} /// {uuid.uuid4().hex}"] = [cred,
-                                                                     num, hulls] + times
+                hulls = [len(hull) for hull, _ in res]
+                hull = sum(hulls) / len(hulls)
+                times = [time for _, time in res]
+                print(format_output(cred, num, hull, it, times))
+                excel[str(uuid.uuid4().hex)] = [cred, num, hull, it] + times
 
-        pd.DataFrame(excel).transpose().to_excel(
-            writer, sheet_name=f"Iter {i}")
-    writer.save()
+            pd.DataFrame(excel).transpose().to_excel(
+                writer, sheet_name=f"Sheet{i + 1}")
+            try:
+                writer.save()
+            except Exception as e:
+                print(e)
+
+    while(True):
+        try:
+            writer.save()
+            break
+        except Exception as e:
+            print(e, '\n')
     writer.close()
