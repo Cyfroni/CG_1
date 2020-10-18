@@ -1,11 +1,41 @@
 import data_manager as dm
 import time
+import threading
+try:
+    import thread
+except ImportError:
+    import _thread as thread
 
 
-def test_alg(alg, points):
-    start = time.time()
-    hull = alg(points)
-    time_elapsed = time.time() - start
+def test_alg(alg, points, *args):
+    hull = []
+    time_elapsed = "error"
+
+    try:
+        start = time.time()
+        hull = alg(points)
+        time_elapsed = time.time() - start
+    except KeyboardInterrupt:
+        raise
+    except Exception as e:
+        print(e)
+
+    return hull, time_elapsed
+
+
+def test_alg_timeout(alg, points, timeout):
+    hull = []
+    time_elapsed = f"{timeout}+"
+
+    timer = threading.Timer(timeout, thread.interrupt_main)
+    timer.start()
+    try:
+        hull, time_elapsed = test_alg(alg, points)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        timer.cancel()
+
     return hull, time_elapsed
 
 
@@ -31,10 +61,14 @@ def _test(alg, cred, num_points):
 def test(alg,
          poly=[(0, 0), (0, 1), (1, 1), (1, 0)], poly_num_points=1000,
          circle=[0, 0, 1], circle_num_points=1000,
-         curve=(lambda x: x*x, (-1, 1)), curve_num_points=1000):
+         curve=(lambda x: -x*x, (-1, 1)), curve_num_points=1000, plot=True):
 
+    times = []
     for cred, num_points in [(poly, poly_num_points), (circle, circle_num_points), (curve, curve_num_points)]:
         points, hull, fig, time_elapsed = _test(alg, cred, num_points)
         print(f"\n\nPLOT\nPoints: {len(points)}\nHull: {len(hull)}")
         print(f"Time elapsed: {time_elapsed : .2f}s")
-        dm.plot(points, hull)
+        times.append(time_elapsed)
+        if plot:
+            dm.plot(points, hull)
+    return times
