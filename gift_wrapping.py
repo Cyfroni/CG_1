@@ -20,4 +20,4 @@ def GIFT_CH(P):
 
 
 if __name__ == "__main__":
-    test(GIFT_CH, curve_num_points=100)
+    test(GIFT_CH)

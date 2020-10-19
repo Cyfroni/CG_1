@@ -8,6 +8,10 @@ try:
     import thread
 except ImportError:
     import _thread as thread
+# from graham_scan import INC_CH
+# from gift_wrapping import GIFT_CH
+# from chan_algorithm import CH_CH
+# from marriage_before_conquest import MbC_CH
 
 
 def test_alg(alg, points, *args):
@@ -48,7 +52,7 @@ def gen_points(cred, num_points):
     if fig:
         points = dm.random_points_within(fig, num_points)
     else:
-        points = dm.points_on(cred, num_points)
+        points = dm.points_on(cred[1], cred[0], num_points)
 
     return points, fig
 
@@ -92,7 +96,7 @@ def run(creds, num_points, algs, filename="Res", iterations=1, view=False, timeo
 
     if view:
         for cred in creds:
-            dm.plot(gen_points(cred, 1000)[0])
+            dm.plot(gen_points(cred, 100000)[0])
 
     for i, cred in enumerate(creds):
         excel = dict()
@@ -122,3 +126,12 @@ def run(creds, num_points, algs, filename="Res", iterations=1, view=False, timeo
         except Exception as e:
             print(e, '\n')
     writer.close()
+
+
+# if __name__ == "__main__":
+#     map(test, [
+#         INC_CH,
+#         GIFT_CH,
+#         CH_CH,
+#         MbC_CH
+#     ])

@@ -1,12 +1,13 @@
 import random
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon, Point
+import types
 
 
-def domain(x_limits, num_points):
+def domain(x_limits, points):
     x_min, x_max = x_limits
-    interval = (x_max - x_min) / num_points
-    for x in range(num_points):
+    interval = (x_max - x_min) / (points - 1)
+    for x in range(points):
         yield x_min + x * interval
 
 
@@ -23,9 +24,8 @@ def random_points_within(fig, num_points):
     return points
 
 
-def points_on(cred, num_points):
-    fun, x_limits = cred
-    return [Point([x, fun(x)]) for x in domain(x_limits, num_points)]
+def points_on(fun, x_limits, points=100):
+    return [Point([x, fun(x)]) for x in domain(x_limits, points)]
 
 
 def unzip_p(points):
@@ -49,8 +49,8 @@ def plot_hull(hull):
 
 
 def plot(points, hull=[], fig=None):
-    # plt.ylim(-0.2, 1.2)
-    # plt.xlim(-0.2, 1.2)
+    # plt.ylim(5, 17)
+    # plt.xlim(-6, 6)
     plot_p(points)
     if hull:
         plot_hull(hull)
@@ -65,6 +65,8 @@ def create_fig(cred):
         return Point(cred[0], cred[1]).buffer(cred[2])
     elif all(isinstance(x, tuple) for x in cred):
         return Polygon(cred)
+    elif isinstance(cred[0], types.LambdaType):
+        return Polygon(points_on(*cred))
 
 
 def calc_bottom_hull(upper_hull, points):

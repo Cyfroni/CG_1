@@ -156,4 +156,4 @@ def MbC_CH(P):
 
 
 if __name__ == "__main__":
-    test(MbC_CH, curve_num_points=100)
+    test(MbC_CH)
