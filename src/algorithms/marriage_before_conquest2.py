@@ -3,13 +3,9 @@ from random import randint
 import math
 from ..managers import plot_manager as pm
 from shapely.geometry import Point
-from operator import attrgetter
 
-print = lambda *args: None
-
-
-def pp(name, p):
-    print(name, *sorted(p, key=attrgetter("x", "y")))
+pm.plot = lambda *args: 0
+print = lambda *args: 0
 
 
 def compare_points(p1, p2):
@@ -31,16 +27,12 @@ def split_by(p, val):
     if len(p) == 2:
         x = p[0]
         y = p[1]
-        if (x.x < y.x):
+        if compare_points(x, y):
             return [x], [y]
         else:
             return [y], [x]
 
-    if len(p) % 2 == 0:
-        return separateSets1(p, val)
-    else:
-        # return separateSets2(p, val)
-        return separateSets1(p, val)
+    return separateSets1(p, val)
 
 
 def separateSets1(points, median):
@@ -51,21 +43,6 @@ def separateSets1(points, median):
             pl.append(p)
         else:
             pr.append(p)
-    return pl, pr
-
-
-def separateSets2(points, median):
-    pl = []
-    pr = []
-    pl.append(median)
-    for p in points:
-        if p == median:
-            continue
-        elif compare_points(p, median):
-            pl.append(p)
-        else:
-            pr.append(p)
-    pr.append(median)
     return pl, pr
 
 
@@ -135,120 +112,174 @@ def quickselect(ls, index, lo=0, hi=None, depth=0, fun=lambda a, b: a < b):
 
 
 def bridge(S, Vl):
-    # S = SS[:]
+    malaka = 0
     canditates = []
+    malaka += 1
+    print("malaka", malaka)  # 1
     if len(S) == 2:
         return getmax_min(S)[::-1]
+    malaka += 1
+    print("malaka", malaka)  # 2
 
+    # print(S)
     # if len(S) % 2 == 1:
-    #     canditates.append(S.pop())
+    #     canditates.append(S.pop(0))
+    malaka += 1
+    print("malaka", malaka)  # 3
 
-    print("q - 1", len(S))
     V = quickselect(S, int(len(S) / 2), fun=compare_points)
+    malaka += 1
+    print("malaka", malaka)  # 4
 
     pl, pr = split_by(S, V)
+    malaka += 1
+    print("malaka", malaka)  # 5
 
-    pp("S", S)
-    pp("pl", pl)
-    pp("pr", pr)
-    pp("V", [V])
-    pp("Vl", [Vl])
-    # print("pl", *pl)
-    # print("pr", *pr)
-    # print("V", V)
-
+    # if (len(pl) != len(pr)):
+    #     # print(pl)
+    #     # print(pr)
+    #     print(*pl)
+    #     print(*pr)
     if (len(pr) > len(pl)):
+        # print(">")
+        # pl.append(pr[0])
+        # print(pl)
+        # print(pr)
         canditates.append(pr.pop(0))
     elif(len(pr) < len(pl)):
+        # print("<")
+        # pr.append(pl[-1])
         canditates.append(pl.pop(0))
 
-    assert len(pl) == len(pr)
-
     slopearr = []
-    i = 0
-    while True:
-        sl = slope(pl[i], pr[i])
-        if math.isinf(sl):
-            print("cand", *canditates)
-            canditates.append(max(pl[i], pr[i], key=lambda x: x.y))
-            print("cand2", *canditates)
-            print("plr", *pl, *pr)
-            del pl[i]
-            del pr[i]
-            print("plr2", *pl, *pr)
-        else:
-            slopearr.append(sl)
-            i += 1
+    # assert len(pl) == len(pr)
+    # i = 0
+    # while True:
+    #     sl = slope(pl[i], pr[i])
+    #     if math.isinf(sl):
+    #         canditates.append(max(pl[i], pr[i], key=lambda x: x.y))
+    #         del pl[i]
+    #         del pr[i]
+    #     else:
+    #         slopearr.append(sl)
+    #         i += 1
 
-        if (i >= len(pl)):
-            break
+    #     if (i >= len(pl)):
+    #         break
+
+    print(f'pl: ', *pl)
+    print(f'pr: ', *pr)
+    print(f'slop: {slopearr}')
+    print(f'canditates: {canditates}')
 
     # if len(slopearr) == 0:
-    #     assert len(canditates) > 1
-    #     print("############", len(canditates))
     #     return bridge(canditates, Vl)
+    malaka += 1
+    print("malaka", malaka)  # 6
 
-    print("q - 2", len(slopearr))
     k = quickselect(slopearr, int(len(slopearr)/2))
+
+    malaka += 1
+    print("malaka", malaka)  # 7
 
     max_slope = max(point.y - k * point.x for point in S)
     max_set = [point for point in S
                if math.isclose(max_slope, point.y - k * point.x)]
-    pp("max_set", max_set)
+
     msmax, msmin = getmax_min(max_set)
+    malaka += 1
+    print("malaka", malaka)  # 8
+    # if not compare_points(Vl, msmin) and compare_points(Vl, msmax):
     if msmin.x <= Vl.x < msmax.x:
         return msmin, msmax
+    malaka += 1
+    print("malaka", malaka)  # 9
+    # try:
+
     smalls, equall, bigl, smallr, equalr, bigr = separate3Sets(
         pl, pr, slopearr, k)
+    malaka += 1
+    print("malaka", malaka)  # 10
+    # except:
+    #     print(pl)
+    #     print(pr)
+    #     print(slopearr)
+    #     print(k)
+    #     raise
 
-    if Vl.x >= msmax.x:
+    if not compare_points(Vl, msmax):
+        # if msmax.x <= Vl.x:
         canditates.extend(equalr)
         canditates.extend(bigr)
         canditates.extend(smallr)
         canditates.extend(smalls)
-    elif Vl.x < msmin.x:
+    if compare_points(Vl, msmin):
+        # if msmin.x > Vl.x:
         canditates.extend(smalls)
         canditates.extend(equall)
         canditates.extend(bigl)
         canditates.extend(bigr)
-    else:
-        print('else: ', Vl)
+
+    # if msmin.x <= Vl.x > msmax.x:
+    malaka += 1
+    print("malaka", malaka)  # 11
+    #     return msmin, msmax
+    # smalls, equall, bigl, smallr, equalr, bigr = separate3Sets(
+    #     pl, pr, slopearr, k)
+    # if msmax.x <= Vl.x:
+    #     canditates.extend(equalr)
+    #     canditates.extend(bigr)
+    #     canditates.extend(smallr)
+    #     canditates.extend(smalls)
+    # if msmin.x > Vl.x:
+    #     canditates.extend(smalls)
+    #     canditates.extend(equall)
+    #     canditates.extend(bigl)
+    #     canditates.extend(bigr)
 
     return bridge(canditates, Vl)
 
 
 def KSHull(S):
-    print("q - 3", len(S))
     Vl = quickselect(S, int(len(S) / 2), fun=compare_points)
-    # pm.plot(S, [], [Point([0, 0]), Vl])
+    pm.plot(S, [], [Point([0, 0]), Vl])
     Upl, Upr = bridge(S, Vl)
-    print("S: ", *S)
-    print("Bridge: ", Upl, Upr)
+    # pm.plot(S, [Upl, Upr], [
+    #     Point([Vl.x - 1, Vl.y]),
+    #     Point([Vl.x + 1, Vl.y]),
+    #     Vl,
+    #     Point([Vl.x, Vl.y + 1]),
+    #     Point([Vl.x, Vl.y - 1])
+    # ])
     Ls, Rs = separateSets(S, Upl, Upr)
-    Ls.append(Upl)
-    Rs.append(Upr)
+    # Ls.append(Upl)
+    # Rs.append(Upr)
+    print("Ls", Ls)
+    print("Rs", Rs)
+    # pm.plot(S, Rs, [Point([0, 0]), Vl])
     maxs, mins = getmax_min(S)
+    print(*S)
     if mins == Upl:
-        print("mins", mins)
         yield Upl
     else:
-        print("Ls")
-        print(*Ls)
-        print(Upl)
         yield from KSHull(Ls)
 
     if maxs == Upr:
-        print("maxs", maxs)
         yield Upr
     else:
-        print("Rs")
-        print(*Rs)
-        print(Upr)
         yield from KSHull(Rs)
 
 
 def MbC_CH(P):
-    u_hull = list(KSHull(P))
+    gen = KSHull(P)
+
+    u_hull = []
+    for p in gen:
+        print(p)
+        u_hull.append(p)
+        pm.plot(P, u_hull)
+
+    # u_hull = list(KSHull(P))
     b_hull = calc_bottom_hull(KSHull, P)
     if (u_hull[-1] == b_hull[0]):
         u_hull.pop()

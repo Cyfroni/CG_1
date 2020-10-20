@@ -16,7 +16,8 @@ def plot_p(points):
 
 
 def plot_fig(fig):
-    plt.plot(*unzip_fig(fig), color='black', linewidth=1)
+    # plt.plot(*unzip_fig(fig), color='black', linewidth=1)
+    plt.plot(*unzip_p(fig), color='black', linewidth=1)
 
 
 def plot_hull(hull):
@@ -24,8 +25,8 @@ def plot_hull(hull):
 
 
 def plot(points, hull=[], fig=None):
-    # plt.ylim(5, 17)
-    # plt.xlim(-6, 6)
+    plt.ylim(-.75, .75)
+    plt.xlim(-.75, .75)
     plot_p(points)
     if hull:
         plot_hull(hull)
