@@ -39,7 +39,7 @@ def main():
     ]
 
     em.run(algs, creds, num_points, filename="Res_",
-           iterations=10, view=True, timeout=10)
+           iterations=10, view=True, timeout=200)
 
 
 if __name__ == "__main__":
