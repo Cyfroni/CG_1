@@ -1,11 +1,6 @@
-from test_manager import test
-from data_manager import calc_bottom_hull
-from common import getmax_min, compute_upper_tangent, compute_upper_tangent_sorted
-from graham_scan import INC_CH
+from .common import getmax_min, compute_upper_tangent, calc_bottom_hull
+from . import INC_CH
 from math import log, floor
-import time
-import data_manager
-import itertools
 
 
 def split(l, n):
@@ -51,32 +46,32 @@ def upper_hull(_P):
 
 
 def CH_CH(_P):
-    hull = upper_hull(_P)
-    hull.pop()
-    return hull + calc_bottom_hull(upper_hull, _P)
+    u_hull = upper_hull(_P)
+    b_hull = calc_bottom_hull(upper_hull, _P)
+    if (u_hull[-1] == b_hull[0]):
+        u_hull.pop()
+    if (b_hull[-1] == u_hull[0]):
+        b_hull.pop()
+    return u_hull + b_hull
 
 
-if __name__ == "__main__":
-    test(CH_CH, curve_num_points=100)
-
-
-def compute_upper_tangent_try(p, r, P, min_angle, t, k):
-    new_p = None
-    new_r = None
-    x = 1
-    for v in P:
-        if p == v:
-            continue
-        abs_angle = common.calc_angle(p, v)
-        rel_angle = common.calc_diff(r, abs_angle)
-        if min_angle == rel_angle:
-            print("hi")
-        if min_angle > rel_angle:
-            min_angle = rel_angle
-            new_r = abs_angle
-            new_p = v
-            x = 0
-    if (x == 0):
-        return new_p, min_angle, new_r,
-    else:
-        return t, min_angle, k
+# def compute_upper_tangent_try(p, r, P, min_angle, t, k):
+#     new_p = None
+#     new_r = None
+#     x = 1
+#     for v in P:
+#         if p == v:
+#             continue
+#         abs_angle = common.calc_angle(p, v)
+#         rel_angle = common.calc_diff(r, abs_angle)
+#         if min_angle == rel_angle:
+#             print("hi")
+#         if min_angle > rel_angle:
+#             min_angle = rel_angle
+#             new_r = abs_angle
+#             new_p = v
+#             x = 0
+#     if (x == 0):
+#         return new_p, min_angle, new_r,
+#     else:
+#         return t, min_angle, k

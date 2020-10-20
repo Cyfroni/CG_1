@@ -1,5 +1,4 @@
-from test_manager import test
-from common import orientation
+from .common import orientation
 
 
 def upper_hull(sorted_P):
@@ -21,8 +20,5 @@ def INC_CH(points, full=True):
         hull.pop()
         P.reverse()
         hull = hull + upper_hull(P)
+        hull.pop()
     return hull
-
-
-if __name__ == "__main__":
-    test(INC_CH, curve_num_points=100)

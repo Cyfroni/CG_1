@@ -1,8 +1,14 @@
-from test_manager import test
-from data_manager import calc_bottom_hull
-from common import getmax_min
-from random import random, randint
-import data_manager
+from .common import getmax_min, calc_bottom_hull
+from random import randint
+import math
+
+
+def compare_points(p1, p2):
+    if p1.x < p2.x:
+        return True
+    # elif p1.x == p2.x and p1.y < p2.y:
+    #     return True
+    return False
 
 
 def slope(p1, p2):
@@ -27,11 +33,11 @@ def split_by(p, val):
 def separateSets1(points, median):
     pl = []
     pr = []
-    for x in points:
-        if x.x < median.x:
-            pl.append(x)
+    for p in points:
+        if p.x < median.x:
+            pl.append(p)
         else:
-            pr.append(x)
+            pr.append(p)
     return pl, pr
 
 
@@ -44,6 +50,16 @@ def separateSets(points, left, right):
         elif x.x >= right.x:
             pr.append(x)
     return pl, pr
+
+# def separateSets(points, left, right):
+#     pl = []
+#     pr = []
+#     for p in points:
+#         if not compare_points(left, p):
+#             pl.append(p)
+#         elif not compare_points(p, right):
+#             pr.append(p)
+#     return pl, pr
 
 
 def separate3Sets(pl, pr, slope, median):
@@ -66,17 +82,19 @@ def separate3Sets(pl, pr, slope, median):
     return small, equal, big, smallr, equalr, bigr
 
 
-def quickselect(ls, index, lo=0, hi=None, depth=0, fun=lambda e: e):
+def quickselect(ls, index, lo=0, hi=None, depth=0, fun=lambda a, b: a < b):
     if hi is None:
         hi = len(ls)-1
     if lo == hi:
         return ls[lo]
+
     pivot = randint(lo, hi)
+
     ls = list(ls)
     ls[lo], ls[pivot] = ls[pivot], ls[lo]
     cur = lo
     for run in range(lo+1, hi+1):
-        if fun(ls[run]) < fun(ls[lo]):
+        if fun(ls[run], ls[lo]):
             cur += 1
             ls[cur], ls[run] = ls[run], ls[cur]
     ls[cur], ls[lo] = ls[lo], ls[cur]
@@ -94,7 +112,7 @@ def bridge(S, Vl):
     if len(S) == 2:
         return getmax_min(S)[::-1]
 
-    V = quickselect(S, int(len(S) / 2), fun=lambda e: e.x)
+    V = quickselect(S, int(len(S) / 2), fun=compare_points)
 
     pl, pr = split_by(S, V)
 
@@ -105,11 +123,13 @@ def bridge(S, Vl):
 
     slopearr = [slope(l, r) for l, r in zip(pl, pr)]
 
+    # print(slopearr)
+
     k = quickselect(slopearr, int(len(slopearr)/2))
 
     max_slope = max(point.y - k * point.x for point in S)
-    max_set = [point for point in S if max_slope - 0.000000001 <
-               point.y - k * point.x < max_slope + 0.000000001]
+    max_set = [point for point in S
+               if math.isclose(max_slope, point.y - k * point.x)]
 
     msmax, msmin = getmax_min(max_set)
     if msmin.x <= Vl.x < msmax.x:
@@ -134,7 +154,7 @@ def bridge(S, Vl):
 
 
 def KSHull(S):
-    Vl = quickselect(S, int(len(S) / 2), fun=lambda e: e.x)
+    Vl = quickselect(S, int(len(S) / 2), fun=compare_points)
     Upl, Upr = bridge(S, Vl)
     Ls, Rs = separateSets(S, Upl, Upr)
     maxs, mins = getmax_min(S)
@@ -150,10 +170,10 @@ def KSHull(S):
 
 
 def MbC_CH(P):
-    hull = list(KSHull(P))
-    hull.pop()
-    return hull + calc_bottom_hull(KSHull, P)
-
-
-if __name__ == "__main__":
-    test(MbC_CH, curve_num_points=100)
+    u_hull = list(KSHull(P))
+    b_hull = calc_bottom_hull(KSHull, P)
+    if (u_hull[-1] == b_hull[0]):
+        u_hull.pop()
+    if (b_hull[-1] == u_hull[0]):
+        b_hull.pop()
+    return u_hull + b_hull
