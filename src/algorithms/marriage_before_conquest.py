@@ -6,8 +6,8 @@ import math
 def compare_points(p1, p2):
     if p1.x < p2.x:
         return True
-    # elif p1.x == p2.x and p1.y < p2.y:
-    #     return True
+    elif p1.x == p2.x and p1.y < p2.y:
+        return True
     return False
 
 
@@ -22,7 +22,7 @@ def split_by(p, val):
     if len(p) == 2:
         x = p[0]
         y = p[1]
-        if (x.x < y.x):
+        if compare_points(x, y):
             return x, y
         else:
             return y, x
@@ -34,32 +34,32 @@ def separateSets1(points, median):
     pl = []
     pr = []
     for p in points:
-        if p.x < median.x:
+        if compare_points(p, median):
             pl.append(p)
         else:
             pr.append(p)
     return pl, pr
 
 
-def separateSets(points, left, right):
-    pl = []
-    pr = []
-    for x in points:
-        if x.x <= left.x:
-            pl.append(x)
-        elif x.x >= right.x:
-            pr.append(x)
-    return pl, pr
-
 # def separateSets(points, left, right):
 #     pl = []
 #     pr = []
-#     for p in points:
-#         if not compare_points(left, p):
-#             pl.append(p)
-#         elif not compare_points(p, right):
-#             pr.append(p)
+#     for x in points:
+#         if x.x <= left.x:
+#             pl.append(x)
+#         elif x.x >= right.x:
+#             pr.append(x)
 #     return pl, pr
+
+def separateSets(points, left, right):
+    pl = []
+    pr = []
+    for p in points:
+        if not compare_points(left, p):
+            pl.append(p)
+        elif not compare_points(p, right):
+            pr.append(p)
+    return pl, pr
 
 
 def separate3Sets(pl, pr, slope, median):
@@ -69,7 +69,7 @@ def separate3Sets(pl, pr, slope, median):
     smallr = []
     equalr = []
     bigr = []
-    for i in range(len(pr)):
+    for i in range(len(slope)):
         if (slope[i] == median):
             equalr.append(pr[i])
             equal.append(pl[i])
@@ -117,8 +117,14 @@ def bridge(S, Vl):
     pl, pr = split_by(S, V)
 
     if (len(pr) > len(pl)):
+        # print(">")
+        # pl.append(pr[0])
+        # print(pl)
+        # print(pr)
         canditates.append(pr.pop(0))
     elif(len(pr) < len(pl)):
+        # print("<")
+        # pr.append(pl[-1])
         canditates.append(pl.pop(0))
 
     slopearr = [slope(l, r) for l, r in zip(pl, pr)]
@@ -132,23 +138,46 @@ def bridge(S, Vl):
                if math.isclose(max_slope, point.y - k * point.x)]
 
     msmax, msmin = getmax_min(max_set)
-    if msmin.x <= Vl.x < msmax.x:
+    if not compare_points(Vl, msmin) and compare_points(Vl, msmax):
         return msmin, msmax
+    # try:
+
     smalls, equall, bigl, smallr, equalr, bigr = separate3Sets(
         pl, pr, slopearr, k)
+    # except:
+    #     print(pl)
+    #     print(pr)
+    #     print(slopearr)
+    #     print(k)
+    #     raise
 
-    if Vl.x >= msmax.x:
+    if not compare_points(Vl, msmax):
+        # if msmax.x <= Vl.x:
         canditates.extend(equalr)
         canditates.extend(bigr)
         canditates.extend(smallr)
         canditates.extend(smalls)
-    elif Vl.x < msmin.x:
+    if compare_points(Vl, msmin):
+        # if msmin.x > Vl.x:
         canditates.extend(smalls)
         canditates.extend(equall)
         canditates.extend(bigl)
         canditates.extend(bigr)
-    else:
-        print('else: ', Vl)
+
+    # if msmin.x <= Vl.x > msmax.x:
+    #     return msmin, msmax
+    # smalls, equall, bigl, smallr, equalr, bigr = separate3Sets(
+    #     pl, pr, slopearr, k)
+    # if msmax.x <= Vl.x:
+    #     canditates.extend(equalr)
+    #     canditates.extend(bigr)
+    #     canditates.extend(smallr)
+    #     canditates.extend(smalls)
+    # if msmin.x > Vl.x:
+    #     canditates.extend(smalls)
+    #     canditates.extend(equall)
+    #     canditates.extend(bigl)
+    #     canditates.extend(bigr)
 
     return bridge(canditates, Vl)
 

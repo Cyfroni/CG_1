@@ -17,6 +17,7 @@ def run_alg(alg, points, *args):
         raise
     except Exception as e:
         print(e)
+        raise
 
     return hull, time_elapsed
 
