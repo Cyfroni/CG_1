@@ -1,4 +1,4 @@
-from src.algorithms import INC_CH, GIFT_CH, CH_CH, MbC_CH
+from src.algorithms import INC_CH, GIFT_CH, CH_CH, MbC_CH, MbC2_CH
 from src.experiments import correctness, correctness_polygon, correctness_visual, exp1_size, exp2_shape
 from src.managers import experiment_manager as em
 from src import figs
@@ -6,24 +6,40 @@ import math
 
 
 def main():
-    pi = math.pi
-    sqrt10 = math.sqrt(10)
-    creds = [
-        [(0, 0), (0, 1), (1, 1), (1, 0)],
-        [(0, 0), (0, sqrt10), (sqrt10, sqrt10), (sqrt10, 0)],
-        [(0, 0), (0, 10), (10, 10), (10, 0)],
-        [(0, 0), (0, 10*sqrt10), (10*sqrt10, 10*sqrt10), (10*sqrt10, 0)],
-        [(0, 0), (0, 100), (100, 100), (100, 0)],
-        [0, 0, 1/pi],
-        [0, 0, sqrt10/pi],
-        [0, 0, 10/pi],
-        [0, 0, 10*sqrt10/pi],
-        [0, 0, 100/pi],
-        # (lambda x: -x*x, (-1, 1)),
+    _creds = [
+        # Rectangle
+        figs.rect(1),
+        figs.rect(10),
+        figs.rect(100),
+        figs.rect(1000),
+        figs.rect(10000),
+
+        # Circle
+        figs.circle(1),
+        figs.circle(10),
+        figs.circle(100),
+        figs.circle(1000),
+        figs.circle(10000),
+
+        # -x^2 curve
+        figs.xx_c(1),
+        figs.xx_c(10),
+        figs.xx_c(100),
+        figs.xx_c(1000),
+        figs.xx_c(10000),
+
+        # Disc curve
+        figs.disc_c(1),
+        figs.disc_c(10),
+        figs.disc_c(100),
+        figs.disc_c(1000),
+        figs.disc_c(10000),
+
+        # Point curve
         ((-1, 1), lambda x: -x*x)
     ]
 
-    num_points = [
+    _num_points = [
         10,
         100,
         1000,
@@ -35,10 +51,11 @@ def main():
         INC_CH,
         GIFT_CH,
         CH_CH,
-        MbC_CH
+        MbC_CH,
+        MbC2_CH,
     ]
 
-    em.run(algs, creds, num_points, filename="Res_",
+    em.run(algs, creds, num_points, filename="res_main",
            iterations=10, view=True, timeout=200)
 
 

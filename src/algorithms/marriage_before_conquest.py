@@ -1,4 +1,4 @@
-from .common import getmax_min, quickselect, calc_bottom_hull
+from .common import getmax_min, getmax_min2, quickselect, calc_bottom_hull, orientation
 import math
 
 
@@ -136,6 +136,39 @@ def KSHull(S):
 def MbC_CH(P):
     u_hull = list(KSHull(P))
     b_hull = calc_bottom_hull(KSHull, P)
+    if (u_hull[-1] == b_hull[0]):
+        u_hull.pop()
+    if (b_hull[-1] == u_hull[0]):
+        b_hull.pop()
+    return u_hull + b_hull
+
+
+def pruning(S, pl, pr):
+    return [p for p in S if orientation(pl, p, pr) <= 0]
+
+
+def KSHull2(S):
+    maxs, mins = getmax_min2(S)
+    S = pruning(S, mins, maxs)
+    Upl, Upr = bridge(S, find_median_p(S))
+    Ls, Rs = separateSets(S, Upl, Upr)
+    Ls.append(Upl)
+    Rs.append(Upr)
+
+    if mins == Upl:
+        yield Upl
+    else:
+        yield from KSHull2(Ls)
+
+    if maxs == Upr:
+        yield Upr
+    else:
+        yield from KSHull2(Rs)
+
+
+def MbC2_CH(P):
+    u_hull = list(KSHull2(P))
+    b_hull = calc_bottom_hull(KSHull2, P)
     if (u_hull[-1] == b_hull[0]):
         u_hull.pop()
     if (b_hull[-1] == u_hull[0]):

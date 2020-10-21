@@ -49,6 +49,23 @@ def getmax_min(points):  # find max and min in n operations
     return xmax, xmin
 
 
+def getmax_min2(points):  # find max and min in n operations
+    xmax = Point(-float('Inf'), -float('Inf'))
+    xmin = Point(float('Inf'), -float('Inf'))
+    for x in points:
+        if (x.x < xmin.x):
+            xmin = x
+        elif(x.x == xmin.x):
+            if (x.y > xmin.y):
+                xmin = x
+        if(x.x > xmax.x):
+            xmax = x
+        elif (x.x == xmax.x):
+            if (x.y < xmax.y):
+                xmax = x
+    return xmax, xmin
+
+
 def quickselect(ls, index, lo=0, hi=None, key=lambda a, b: a < b):
     if hi is None:
         hi = len(ls)-1

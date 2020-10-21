@@ -15,8 +15,6 @@ def remove_leftmost(p, U):
 def tangent(p, U, l):
     t = [compute_upper_tangent(p, l, U_i) for U_i in U]
     t = [pp for pp, rr in t if pp is not None]
-    # t = [compute_upper_tangent_sorted(p, U_i) for U_i in U]
-    # t = [tt for tt in t if tt is not None]
     return t
 
 
