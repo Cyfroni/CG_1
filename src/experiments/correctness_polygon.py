@@ -1,6 +1,8 @@
 from . import _algs, _creds, _num_points, tm, dm, pm
 from .helpers import assert_sameness
-from operator import attrgetter
+
+_creds = _creds[:-1]
+_num_points = _num_points[:2]
 
 
 def run(algs=_algs, creds=_creds, num_points=_num_points):
@@ -16,13 +18,8 @@ def run(algs=_algs, creds=_creds, num_points=_num_points):
             points += fig_p
             res = [tm.run_alg(alg, points) for alg in algs]
             hulls = [hull for hull, _ in res]
-            try:
-                assert_sameness(hulls, fig_p)
-            except:
-                for hull in hulls:
-                    print(len(hull))
-                    print(*sorted(hull, key=attrgetter("x", "y")))
-                    pm.plot(points, hull)
+
+            assert_sameness(hulls, fig_p)
 
             i += 1
     print("\n\nCORRECTNESS_POLYGON: PASSED\n")

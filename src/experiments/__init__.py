@@ -32,13 +32,13 @@ _creds = [
     figs.disc_c(10000),
 
     # Point curve
-    # ((-1, 1), lambda x: -x*x)
+    ((-1, 1), lambda x: -x*x)
 ]
 
 _num_points = [
     10,
     100,
     1000,
-    # 10000,
-    # 100000
+    10000,
+    100000
 ]
