@@ -11,8 +11,6 @@ def run(algs=_algs, creds=_creds, num_points=_num_points):
     end = len(creds) * len(num_points)
     for cred in creds:
         for num in num_points:
-            print(f"({i}/{end})")
-
             points, fig = dm.gen_points(cred, num)
             fig_p = pm.unzip_fig(fig)
             points += fig_p
@@ -21,5 +19,6 @@ def run(algs=_algs, creds=_creds, num_points=_num_points):
 
             assert_sameness(hulls, fig_p)
 
+            print(f"({i}/{end})")
             i += 1
     print("\n\nCORRECTNESS_POLYGON: PASSED\n")

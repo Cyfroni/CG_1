@@ -4,5 +4,4 @@ _num_points = _num_points[:4]
 
 
 def run(algs=_algs, creds=_creds, num_points=_num_points):
-    em.run(algs, creds, num_points, filename="exp1",
-           iterations=10, timeout=1000)
+    em.run(algs, creds, num_points, filename="exp1", iterations=10)
