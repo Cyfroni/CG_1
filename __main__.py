@@ -1,5 +1,5 @@
 from src.algorithms import INC_CH, GIFT_CH, CH_CH, MbC_CH, MbC2_CH
-from src.experiments import correctness, correctness_polygon, correctness_visual, exp1_size, exp2_shape
+from src.experiments import correctness, correctness_polygon, correctness_visual, exp1_size_c, exp2_area_c, exp3_hull
 from src.managers import experiment_manager as em
 from src import figs
 import math
@@ -63,6 +63,7 @@ if __name__ == "__main__":
     # correctness.run()
     # correctness_polygon.run()
     # correctness_visual.run()
-    main()
-    # exp1_size.run()
-    # exp2_shape.run()
+    # main()
+    exp3_hull.run()
+    exp1_size_c.run()
+    # exp2_area_c.run()

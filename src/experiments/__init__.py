@@ -1,5 +1,5 @@
 from .. import figs
-from ..algorithms import algs as _algs
+from ..algorithms import algs as _algs, algs2 as _algs2
 from ..managers import test_manager as tm, data_manager as dm, plot_manager as pm, experiment_manager as em
 
 _creds = [
@@ -32,7 +32,7 @@ _creds = [
     figs.disc_c(10000),
 
     # Point curve
-    ((-1, 1), lambda x: -x*x)
+    ((-100, 100), lambda x: -x*x)
 ]
 
 _num_points = [

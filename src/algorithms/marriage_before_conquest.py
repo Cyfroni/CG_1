@@ -1,4 +1,4 @@
-from .common import getmax_min, getmax_min2, quickselect, calc_bottom_hull, orientation
+from .common import getmax_min, quickselect, calc_bottom_hull, orientation
 import math
 
 
@@ -148,7 +148,8 @@ def pruning(S, pl, pr):
 
 
 def KSHull2(S):
-    maxs, mins = getmax_min2(S)
+    maxs, mins = getmax_min(S)
+
     S = pruning(S, mins, maxs)
     Upl, Upr = bridge(S, find_median_p(S))
     Ls, Rs = separateSets(S, Upl, Upr)

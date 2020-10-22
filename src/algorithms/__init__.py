@@ -4,3 +4,4 @@ from .chan_algorithm import CH_CH
 from .marriage_before_conquest import MbC_CH, MbC2_CH
 
 algs = [INC_CH, GIFT_CH, CH_CH, MbC_CH, MbC2_CH]
+algs2 = [INC_CH, GIFT_CH, CH_CH, MbC2_CH]
