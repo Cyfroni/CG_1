@@ -17,7 +17,6 @@ def plot_p(points):
 
 def plot_fig(fig):
     plt.plot(*unzip_fig(fig), color='black', linewidth=1)
-    # plt.plot(*unzip_p(fig), color='black', linewidth=1)
 
 
 def plot_hull(hull):

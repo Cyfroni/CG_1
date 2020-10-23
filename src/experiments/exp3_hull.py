@@ -1,4 +1,4 @@
-from . import _algs2, _creds, _num_points, tm, dm, pm, em
+from . import _algs, _creds, _num_points, tm, dm, pm, em
 import random
 import pandas as pd
 import uuid
@@ -6,10 +6,9 @@ import uuid
 _cred = _creds[-1]
 _num = _num_points[-2]
 _hulls_points = _num_points[:-2]
-# del _algs[3]
 
 
-def run(algs=_algs2, hulls_points=_hulls_points):
+def run(algs=_algs, hulls_points=_hulls_points):
     writer = pd.ExcelWriter(f"exp3_hull.xlsx", engine='openpyxl')
 
     excel = dict()

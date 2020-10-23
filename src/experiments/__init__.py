@@ -1,5 +1,5 @@
 from .. import figs
-from ..algorithms import algs as _algs, algs2 as _algs2
+from ..algorithms import INC_CH, GIFT_CH, CH_CH, MbC_CH, MbC2_CH
 from ..managers import test_manager as tm, data_manager as dm, plot_manager as pm, experiment_manager as em
 
 _creds = [
@@ -41,4 +41,12 @@ _num_points = [
     1000,
     10000,
     100000
+]
+
+_algs = [
+    INC_CH,
+    GIFT_CH,
+    CH_CH,
+    MbC_CH,
+    MbC2_CH
 ]

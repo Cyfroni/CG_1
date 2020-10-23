@@ -6,7 +6,7 @@ import math
 
 
 def main():
-    _creds = [
+    creds = [
         # Rectangle
         figs.rect(1),
         figs.rect(10),
@@ -39,7 +39,7 @@ def main():
         ((-1, 1), lambda x: -x*x)
     ]
 
-    _num_points = [
+    num_points = [
         10,
         100,
         1000,
@@ -52,7 +52,7 @@ def main():
         GIFT_CH,
         CH_CH,
         MbC_CH,
-        MbC2_CH,
+        MbC2_CH
     ]
 
     em.run(algs, creds, num_points, filename="res_main",
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     # correctness.run()
     # correctness_polygon.run()
     # correctness_visual.run()
-    # main()
-    exp3_hull.run()
-    exp1_size_c.run()
+    main()
+    # exp1_size_c.run()
     # exp2_area_c.run()
+    # exp3_hull.run()
