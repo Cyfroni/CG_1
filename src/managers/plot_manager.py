@@ -7,7 +7,7 @@ def unzip_p(points):
 
 
 def unzip_fig(fig):
-    fig_p = {(round(x, 8), round(y, 8)) for x, y in fig.exterior.coords}
+    fig_p = {(round(x, 6), round(y, 6)) for x, y in fig.exterior.coords}
     return [Point(x, y) for x, y in fig_p]
 
 
@@ -24,8 +24,6 @@ def plot_hull(hull):
 
 
 def plot(points, hull=[], fig=None):
-    # plt.ylim(5, 17)
-    # plt.xlim(-6, 6)
     plot_p(points)
     if hull:
         plot_hull(hull)

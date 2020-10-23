@@ -1,5 +1,5 @@
 from .. import figs
-from ..algorithms import algs as _algs
+from ..algorithms import INC_CH, GIFT_CH, CH_CH, MbC_CH, MbC2_CH
 from ..managers import test_manager as tm, data_manager as dm, plot_manager as pm, experiment_manager as em
 
 _creds = [
@@ -11,11 +11,11 @@ _creds = [
     figs.rect(10000),
 
     # Circle
-    # figs.circle(1),
-    # figs.circle(10),
-    # figs.circle(100),
-    # figs.circle(1000),
-    # figs.circle(10000),
+    figs.circle(1),
+    figs.circle(10),
+    figs.circle(100),
+    figs.circle(1000),
+    figs.circle(10000),
 
     # -x^2 curve
     figs.xx_c(1),
@@ -32,13 +32,21 @@ _creds = [
     figs.disc_c(10000),
 
     # Point curve
-    # ((-1, 1), lambda x: -x*x)
+    ((-100, 100), lambda x: -x*x)
 ]
 
 _num_points = [
     10,
     100,
     1000,
-    # 10000,
-    # 100000
+    10000,
+    100000
+]
+
+_algs = [
+    INC_CH,
+    GIFT_CH,
+    CH_CH,
+    MbC_CH,
+    MbC2_CH
 ]

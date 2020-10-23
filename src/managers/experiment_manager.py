@@ -19,7 +19,10 @@ def run(algs, creds, num_points, filename="Res", iterations=1, view=False, timeo
         for cred in creds:
             tm.view_cred(cred)
 
-    for i, cred in enumerate(creds):
+    i = 1
+    end = len(creds) * len(num_points) * iterations
+
+    for ic, cred in enumerate(creds):
         excel = dict()
         excel['id'] = ['creds', 'n', 'h', 'it'] + \
             [alg.__name__ for alg in algs]
@@ -29,11 +32,13 @@ def run(algs, creds, num_points, filename="Res", iterations=1, view=False, timeo
                 hulls = [len(hull) for hull, _ in res]
                 hull = sum(hulls) / len(hulls)
                 times = [time for _, time in res]
-                print(format_output(cred, num, hull, it, times))
+                print(f"({i: >4}/{end})# " +
+                      format_output(cred, num, hull, it, times))
+                i += 1
                 excel[str(uuid.uuid4().hex)] = [cred, num, hull, it] + times
 
             pd.DataFrame(excel).transpose().to_excel(
-                writer, sheet_name=f"Sheet{i + 1}")
+                writer, sheet_name=f"Sheet{ic + 1}")
             try:
                 writer.save()
             except Exception as e:

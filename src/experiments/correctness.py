@@ -11,11 +11,11 @@ def run(algs=_algs, creds=_creds, num_points=_num_points):
     end = len(creds) * len(num_points)
     for cred in creds:
         for num in num_points:
-            print(f"({i}/{end}) ")
-
             res, _, _ = tm.run_test(algs, cred, num)
             hulls = [hull for hull, _ in res]
+
             assert_sameness(hulls)
 
+            print(f"({i}/{end}) ")
             i += 1
     print("\n\nCORRECTNESS: PASSED\n")

@@ -1,40 +1,32 @@
-from .common import getmax_min, calc_bottom_hull
-from random import randint
+from .common import getmax_min, quickselect, calc_bottom_hull, orientation
 import math
 
 
 def compare_points(p1, p2):
-    if p1.x < p2.x:
-        return True
-    # elif p1.x == p2.x and p1.y < p2.y:
-    #     return True
-    return False
+    return p1.x < p2.x or (p1.x == p2.x and p1.y < p2.y)
+
+
+def find_median_p(points):
+    return quickselect(points, int(len(points) / 2), key=compare_points)
+
+
+def find_median(values):
+    return quickselect(values, int(len(values) / 2))
 
 
 def slope(p1, p2):
     return 1.0 * (p1.y - p2.y) / (p1.x - p2.x) if p1.x != p2.x else float('inf')
 
 
-def split_by(p, val):
-    pl = []
-    pr = []
-
-    if len(p) == 2:
-        x = p[0]
-        y = p[1]
-        if (x.x < y.x):
-            return x, y
-        else:
-            return y, x
-
-    return separateSets1(p, val)
+def line(p, a):
+    return p.y - a * p.x
 
 
-def separateSets1(points, median):
+def split_by(points, val):
     pl = []
     pr = []
     for p in points:
-        if p.x < median.x:
+        if compare_points(p, val):
             pl.append(p)
         else:
             pr.append(p)
@@ -45,21 +37,11 @@ def separateSets(points, left, right):
     pl = []
     pr = []
     for x in points:
-        if x.x <= left.x:
+        if x.x < left.x:
             pl.append(x)
-        elif x.x >= right.x:
+        elif x.x > right.x:
             pr.append(x)
     return pl, pr
-
-# def separateSets(points, left, right):
-#     pl = []
-#     pr = []
-#     for p in points:
-#         if not compare_points(left, p):
-#             pl.append(p)
-#         elif not compare_points(p, right):
-#             pr.append(p)
-#     return pl, pr
 
 
 def separate3Sets(pl, pr, slope, median):
@@ -69,7 +51,7 @@ def separate3Sets(pl, pr, slope, median):
     smallr = []
     equalr = []
     bigr = []
-    for i in range(len(pr)):
+    for i in range(len(slope)):
         if (slope[i] == median):
             equalr.append(pr[i])
             equal.append(pl[i])
@@ -82,58 +64,40 @@ def separate3Sets(pl, pr, slope, median):
     return small, equal, big, smallr, equalr, bigr
 
 
-def quickselect(ls, index, lo=0, hi=None, depth=0, fun=lambda a, b: a < b):
-    if hi is None:
-        hi = len(ls)-1
-    if lo == hi:
-        return ls[lo]
-
-    pivot = randint(lo, hi)
-
-    ls = list(ls)
-    ls[lo], ls[pivot] = ls[pivot], ls[lo]
-    cur = lo
-    for run in range(lo+1, hi+1):
-        if fun(ls[run], ls[lo]):
-            cur += 1
-            ls[cur], ls[run] = ls[run], ls[cur]
-    ls[cur], ls[lo] = ls[lo], ls[cur]
-    if index < cur:
-        return quickselect(ls, index, lo, cur-1, depth+1, fun)
-    elif index > cur:
-        return quickselect(ls, index, cur+1, hi, depth+1, fun)
-    else:
-        return ls[cur]
-
-
 def bridge(S, Vl):
-    canditates = []
 
     if len(S) == 2:
         return getmax_min(S)[::-1]
 
-    V = quickselect(S, int(len(S) / 2), fun=compare_points)
+    pl, pr = split_by(S, find_median_p(S))
 
-    pl, pr = split_by(S, V)
-
+    canditates = []
     if (len(pr) > len(pl)):
         canditates.append(pr.pop(0))
     elif(len(pr) < len(pl)):
         canditates.append(pl.pop(0))
 
-    slopearr = [slope(l, r) for l, r in zip(pl, pr)]
+    slopearr = []
+    i = 0
+    while i < len(pl):
+        slop = slope(pl[i], pr[i])
+        if math.isinf(slop):
+            canditates.append(pl[i] if pl[i].y > pr[i].y else pr[i])
+            del pl[i]
+            del pr[i]
+        else:
+            slopearr.append(slop)
+            i += 1
 
-    # print(slopearr)
+    k = find_median(slopearr)
 
-    k = quickselect(slopearr, int(len(slopearr)/2))
-
-    max_slope = max(point.y - k * point.x for point in S)
-    max_set = [point for point in S
-               if math.isclose(max_slope, point.y - k * point.x)]
+    max_slope = max(line(p, k) for p in S)
+    max_set = [p for p in S if math.isclose(max_slope, line(p, k))]
 
     msmax, msmin = getmax_min(max_set)
     if msmin.x <= Vl.x < msmax.x:
         return msmin, msmax
+
     smalls, equall, bigl, smallr, equalr, bigr = separate3Sets(
         pl, pr, slopearr, k)
 
@@ -147,16 +111,16 @@ def bridge(S, Vl):
         canditates.extend(equall)
         canditates.extend(bigl)
         canditates.extend(bigr)
-    else:
-        print('else: ', Vl)
 
     return bridge(canditates, Vl)
 
 
 def KSHull(S):
-    Vl = quickselect(S, int(len(S) / 2), fun=compare_points)
-    Upl, Upr = bridge(S, Vl)
+    Upl, Upr = bridge(S, find_median_p(S))
     Ls, Rs = separateSets(S, Upl, Upr)
+    Ls.append(Upl)
+    Rs.append(Upr)
+
     maxs, mins = getmax_min(S)
     if mins == Upl:
         yield Upl
@@ -172,6 +136,40 @@ def KSHull(S):
 def MbC_CH(P):
     u_hull = list(KSHull(P))
     b_hull = calc_bottom_hull(KSHull, P)
+    if (u_hull[-1] == b_hull[0]):
+        u_hull.pop()
+    if (b_hull[-1] == u_hull[0]):
+        b_hull.pop()
+    return u_hull + b_hull
+
+
+def pruning(S, pl, pr):
+    return [p for p in S if orientation(pl, p, pr) <= 0]
+
+
+def KSHull2(S):
+    maxs, mins = getmax_min(S)
+
+    S = pruning(S, mins, maxs)
+    Upl, Upr = bridge(S, find_median_p(S))
+    Ls, Rs = separateSets(S, Upl, Upr)
+    Ls.append(Upl)
+    Rs.append(Upr)
+
+    if mins == Upl:
+        yield Upl
+    else:
+        yield from KSHull2(Ls)
+
+    if maxs == Upr:
+        yield Upr
+    else:
+        yield from KSHull2(Rs)
+
+
+def MbC2_CH(P):
+    u_hull = list(KSHull2(P))
+    b_hull = calc_bottom_hull(KSHull2, P)
     if (u_hull[-1] == b_hull[0]):
         u_hull.pop()
     if (b_hull[-1] == u_hull[0]):
